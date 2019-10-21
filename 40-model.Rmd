@@ -1,0 +1,12 @@
+---
+title: "40-model"
+output: html_notebook
+---
+**5. Prepare the data for modeling **
+
+just tidy data frame w/feature engineered columns
+
+```{r}
+
+```
+

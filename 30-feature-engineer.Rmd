@@ -1,0 +1,89 @@
+---
+title: "30-feature-engineer"
+output:
+  html_document:
+    code_folding: hide
+    df_print: paged
+---
+```{r}
+library(tidyverse)
+```
+
+
+# Count the number of languages an app provides
+
+engineer function 1: abrv_count
+will add a column to the df that will count the number of values
+```{r}
+num_abrv<- function(){
+
+}
+
+abrv_count<- function(){
+  
+}
+
+
+```
+
+
+# Calculates interaction between price and language 
+
+engineer function 2: interact_price_lang_num
+Create a function that will take the engineered feature num_ab and calculates interaction of that and price. 
+
+**Information about interaction can be found in the README2.md file**
+
+```{r}
+interact_price_lang_num<-function() {
+
+}
+
+
+
+```
+
+engineer function 3:count_by
+creates a new column which will return the number of games by the specified column
+```{r}
+count_n<- function(x){
+  length(x)
+}
+
+count_by<- function(df, vars,by){
+  df %>% 
+    group_by({{by}}) %>% 
+    mutate_at(vars, list(num=count_n)) %>% 
+    ungroup() %>% 
+    select(contains("num"),{{by}},everything()) %>% 
+    arrange(desc(num))
+}
+
+cl_appstore_games %>% 
+  count_by(c("average_user_rating"), by=developer)
+
+cl_appstore_games %>% 
+  count_by(c("average_user_rating"), by=age_rating)
+```
+
+
+engineer 4 = days since last update (today - current_version_release)
+creates a column that is the number of days the current version
+```{r}
+cl_appstore_games %>% 
+  mutate(test= today()-current_version_release_date)
+
+since_l_days<-function(x){
+  today()-x
+}
+
+days_since_last_v<- function(df, vars){
+  df %>% 
+  mutate_at(vars,list(day_since_last_v=since_l_days))%>% 
+  select(contains("day_since_last_v"), everything())
+}
+cl_appstore_games %>% 
+  days_since_last_v("original_release_date")
+
+```
+

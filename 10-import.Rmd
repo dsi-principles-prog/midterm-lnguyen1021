@@ -1,0 +1,106 @@
+---
+title: "10-import"
+output:
+  html_document:
+    code_folding: hide
+    df_print: paged
+author: "Linh Nguyen"
+---
+
+#Description of Data
+
+The dataset is a mobile game dataset from kaggle that was pulled via iTunes API in August 2019. The dataset contains ~17,000 mobile games on the iTunes app store. Features of the data inlcude: URL, Icon, ID, Name, Subtitle, AVG User Rating, Price, In-app purchase, Description, Developer, Age Rating, Languages, Primary Genre, Genres, Original Release Date, Current Version. 
+
+**BIG QUESTION**
+
+I want to see if we can identify features/ engineer features that could predict how successful an app is (user ratings). i.e.
+
+What features can predict mobile app success?
+
+the average rating columns should be filled. (no N/As)
+
+***
+
+```{r message=FALSE,  echo=F}
+library(tidyverse)
+library(janitor)
+library(assertr)
+library(lubridate)
+library(ggplot2)
+library(tidyr)
+library(lubridate)
+library(purrr)
+```
+
+
+## Import data
+```{r}
+appstore_games <- read_csv("data/appstore_games.csv", 
+    col_types = cols(`Current Version Release Date` = col_datetime(format = "%d/%m/%Y"), 
+        `In-app Purchases` = col_double(), 
+        `Original Release Date` = col_datetime(format = "%d/%m/%Y"))) %>% 
+  clean_names()
+```
+
+asserts rows >17000 and numeric columns should be a non-negative number
+price, in-app purchases, user rating, user count, size
+```{r}
+appstore_games %>% 
+  assert(nrow(.) > 17000) %>% 
+  assert(within_bounds(0,Inf), average_user_rating) %>% 
+  assert(within_bounds(0,Inf), user_rating_count) %>% 
+  assert(within_bounds(0,Inf), price) %>% 
+  assert(within_bounds(0,Inf), in_app_purchases) %>% 
+  assert(within_bounds(0,Inf), size)
+```
+
+cheking to make sure now that there are no NAs in the columns that are important to our question
+```{r}
+# appstore_games %>% 
+#   assert(not_na,c(name, average_user_rating, price, user_rating_count))
+```
+Average user rating and user rating counts have matching number of NAs.
+I think these are meaningful NA's so we will keep them in the dataset
+
+however when calculating/ building models I will remove them.
+I will come back to the NAs and address them later since they are probably meaningful
+
+let us take a look at the rows with NA prices
+```{r}
+appstore_games %>% 
+  filter(is.na(price))
+```
+
+hmm all of the apps with NAs in the price column were release in 2019. I would assume they are free apps but i think it may be better to just remove these from the dataset since there is such a small number (24/17007).
+
+
+***
+
+## Clean Data
+
+Some of these rows are not important to us for the time being:
+1) icon_url 
+2) subtitle 
+3) url 
+4) description
+
+I will remove these columns and create a dataset which we will use to subset for the remaining analysis
+
+Also i will be removing the rows where price and average_user rating is NA because we are interested in looking at average_user_rating
+
+```{r}
+cl_appstore_games <- appstore_games %>% 
+  select(-c(icon_url, subtitle, url, description)) %>%
+  filter(!is.na(price), !is.na(average_user_rating))
+dim(cl_appstore_games)
+
+cl_appstore_games$original_release_date<- ymd(cl_appstore_games$original_release_date)
+cl_appstore_games$current_version_release_date<- ymd(cl_appstore_games$current_version_release_date)
+```
+
+
+```{r}
+head(cl_appstore_games)
+```
+
+
