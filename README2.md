@@ -1,9 +1,4 @@
-## Project
-
-Using the data and code you developed for your last assignment, fill out this repo repository so that it:
-
-
-# Mobile App Data
+# Mobile App Project
 
 ## Source Description
 The dataset is a mobile game dataset from kaggle that was pulled via iTunes API in August 2019. More details about the dataset can be found in 10-import file
