@@ -4,9 +4,18 @@ output: html_notebook
 ---
 **5. Prepare the data for modeling **
 
-just tidy data frame w/feature engineered columns
+
 
 ```{r}
+model1 <- cl_appstore_games %>% 
+  days_since_last_v("current_version_release_date") %>% 
+  count_by(c("average_user_rating"), by=developer) 
+  # abrv_count() %>% 
+  # interact_price_lang_num() %>% 
+  # assert()
 
+model1
+
+  
 ```
 

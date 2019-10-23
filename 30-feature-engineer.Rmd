@@ -9,12 +9,15 @@ output:
 library(tidyverse)
 ```
 
+In order to conduct an effect measure modification analysis we will need to engineer a feature that has the effect of the two variables we are interested in.
+
+Let us create a function that will count the number of languages (abbreviation of 2 letters) an app provides in the `languages` column.
 
 # Count the number of languages an app provides
 
 engineer function 1: abrv_count
 will add a column to the df that will count the number of values
-```{r}
+```{r abr_count}
 num_abrv<- function(){
 
 }
@@ -27,6 +30,8 @@ abrv_count<- function(){
 ```
 
 
+Since price is already a numeric value we can just create a function to engineer the effect of price and number of languages
+
 # Calculates interaction between price and language 
 
 engineer function 2: interact_price_lang_num
@@ -34,7 +39,7 @@ Create a function that will take the engineered feature num_ab and calculates in
 
 **Information about interaction can be found in the README2.md file**
 
-```{r}
+```{r interact_price_lang_num}
 interact_price_lang_num<-function() {
 
 }
@@ -43,9 +48,13 @@ interact_price_lang_num<-function() {
 
 ```
 
+The number of games a developer creates could influence the user rating. More games could potentially gather a following of users who enjoy the developer games. There also may be a relationship between number of games by a developer and how high the ratings of their games are
+
+# Count the number of games by a developer
+
 engineer function 3:count_by
 creates a new column which will return the number of games by the specified column
-```{r}
+```{r count_by}
 count_n<- function(x){
   length(x)
 }
@@ -66,10 +75,13 @@ cl_appstore_games %>%
   count_by(c("average_user_rating"), by=age_rating)
 ```
 
+Another interesting feature to add is the number of days since last version update. There could be a potential effect of the number of days since an app has been updated and the how high the ratings are
+
+# calculates the number of days since the last version update
 
 engineer 4 = days since last update (today - current_version_release)
 creates a column that is the number of days the current version
-```{r}
+```{r days_since_last_v}
 cl_appstore_games %>% 
   mutate(test= today()-current_version_release_date)
 

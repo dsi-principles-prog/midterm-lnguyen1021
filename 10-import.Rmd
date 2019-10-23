@@ -45,19 +45,20 @@ appstore_games <- read_csv("data/appstore_games.csv",
 asserts rows >17000 and numeric columns should be a non-negative number
 price, in-app purchases, user rating, user count, size
 ```{r}
-appstore_games %>% 
-  assert(nrow(.) > 17000) %>% 
-  assert(within_bounds(0,Inf), average_user_rating) %>% 
-  assert(within_bounds(0,Inf), user_rating_count) %>% 
-  assert(within_bounds(0,Inf), price) %>% 
-  assert(within_bounds(0,Inf), in_app_purchases) %>% 
-  assert(within_bounds(0,Inf), size)
+
+appstore_games %>% assert(nrow(.) > 17000) # assert the number of rows in the dataset
+appstore_games %>% assert(within_bounds(0,Inf), average_user_rating) # assert to make sure the numeric columns are not negative 
+appstore_games %>% assert(within_bounds(0,Inf), user_rating_count)
+appstore_games %>% assert(within_bounds(0,Inf), price)
+appstore_games %>% assert(within_bounds(0,Inf), in_app_purchases)
+appstore_games %>% assert(within_bounds(0,Inf), size)
+
 ```
 
 cheking to make sure now that there are no NAs in the columns that are important to our question
 ```{r}
-# appstore_games %>% 
-#   assert(not_na,c(name, average_user_rating, price, user_rating_count))
+#cheking to make sure now that there are no NAs in the columns that are important to our question
+appstore_games %>% assert(not_na,c(name, average_user_rating, price, user_rating_count))
 ```
 Average user rating and user rating counts have matching number of NAs.
 I think these are meaningful NA's so we will keep them in the dataset
@@ -90,17 +91,19 @@ Also i will be removing the rows where price and average_user rating is NA becau
 
 ```{r}
 cl_appstore_games <- appstore_games %>% 
-  select(-c(icon_url, subtitle, url, description)) %>%
-  filter(!is.na(price), !is.na(average_user_rating))
-dim(cl_appstore_games)
+  select(-c(icon_url, subtitle, url, description)) %>% #select all columns besides ones listed
+  filter(!is.na(price), !is.na(average_user_rating)) %>%  #remove rows w/ NA in price and only selects rows rows that have a value in the average_user rating
+  unique # only unique rows (no duplicates)
 
-cl_appstore_games$original_release_date<- ymd(cl_appstore_games$original_release_date)
-cl_appstore_games$current_version_release_date<- ymd(cl_appstore_games$current_version_release_date)
+
+cl_appstore_games<-cl_appstore_games %>%  mutate(original_release_date= ymd(original_release_date), current_version_release_date=ymd(current_version_release_date)) %>%  select(everything())
+
 ```
 
 
 ```{r}
 head(cl_appstore_games)
+dim(cl_appstore_games)
 ```
 
 
