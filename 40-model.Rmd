@@ -6,13 +6,15 @@ output: html_notebook
 
 
 
-```{r}
+```{r data_model_prep}
+#add other features here
+
 model1 <- cl_appstore_games %>% 
   days_since_last_v("current_version_release_date") %>% 
-  count_by(c("average_user_rating"), by=developer) 
-  # abrv_count() %>% 
-  # interact_price_lang_num() %>% 
-  # assert()
+  count_by(c("average_user_rating"), by=developer) %>% 
+  #abrv_count function here %>% 
+  #interact_price_lang_num here
+  #assets to make sure the engineered function made columns correctly
 
 model1
 

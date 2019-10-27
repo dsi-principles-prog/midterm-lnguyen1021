@@ -13,15 +13,15 @@ The dataset is a mobile game dataset from kaggle that was pulled via iTunes API 
 
 **BIG QUESTION**
 
-I want to see if we can identify features/ engineer features that could predict how successful an app is (user ratings). i.e.
+I want to see if we can identify features/ engineer features that could predict how successful an app is (user ratings).
 
 What features can predict mobile app success?
 
-the average rating columns should be filled. (no N/As)
+*the average rating columns should be filled. (no N/As) since it is our dependent variable*
 
 ***
 
-```{r message=FALSE,  echo=F}
+```{r message=FALSE,  echo=F libraries}
 library(tidyverse)
 library(janitor)
 library(assertr)
@@ -34,7 +34,7 @@ library(purrr)
 
 
 ## Import data
-```{r}
+```{r import}
 appstore_games <- read_csv("data/appstore_games.csv", 
     col_types = cols(`Current Version Release Date` = col_datetime(format = "%d/%m/%Y"), 
         `In-app Purchases` = col_double(), 
@@ -44,22 +44,18 @@ appstore_games <- read_csv("data/appstore_games.csv",
 
 asserts rows >17000 and numeric columns should be a non-negative number
 price, in-app purchases, user rating, user count, size
-```{r}
+```{r asserts}
 
 appstore_games %>% assert(nrow(.) > 17000) # assert the number of rows in the dataset
-appstore_games %>% assert(within_bounds(0,Inf), average_user_rating) # assert to make sure the numeric columns are not negative 
+appstore_games %>% assert(within_bounds(0,Inf), average_user_rating) # assert to make sure the numeric columns are not negative: avg user rating, user rating count, price, app purchase, size
 appstore_games %>% assert(within_bounds(0,Inf), user_rating_count)
 appstore_games %>% assert(within_bounds(0,Inf), price)
 appstore_games %>% assert(within_bounds(0,Inf), in_app_purchases)
 appstore_games %>% assert(within_bounds(0,Inf), size)
-
-```
-
-cheking to make sure now that there are no NAs in the columns that are important to our question
-```{r}
 #cheking to make sure now that there are no NAs in the columns that are important to our question
 appstore_games %>% assert(not_na,c(name, average_user_rating, price, user_rating_count))
 ```
+
 Average user rating and user rating counts have matching number of NAs.
 I think these are meaningful NA's so we will keep them in the dataset
 
@@ -67,7 +63,7 @@ however when calculating/ building models I will remove them.
 I will come back to the NAs and address them later since they are probably meaningful
 
 let us take a look at the rows with NA prices
-```{r}
+```{r NA_check}
 appstore_games %>% 
   filter(is.na(price))
 ```
@@ -89,7 +85,7 @@ I will remove these columns and create a dataset which we will use to subset for
 
 Also i will be removing the rows where price and average_user rating is NA because we are interested in looking at average_user_rating
 
-```{r}
+```{r data_subset}
 cl_appstore_games <- appstore_games %>% 
   select(-c(icon_url, subtitle, url, description)) %>% #select all columns besides ones listed
   filter(!is.na(price), !is.na(average_user_rating)) %>%  #remove rows w/ NA in price and only selects rows rows that have a value in the average_user rating
@@ -101,7 +97,7 @@ cl_appstore_games<-cl_appstore_games %>%  mutate(original_release_date= ymd(orig
 ```
 
 
-```{r}
+```{r data_str_check}
 head(cl_appstore_games)
 dim(cl_appstore_games)
 ```

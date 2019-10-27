@@ -5,9 +5,6 @@ output:
     code_folding: hide
     df_print: paged
 ---
-```{r}
-library(tidyverse)
-```
 
 In order to conduct an effect measure modification analysis we will need to engineer a feature that has the effect of the two variables we are interested in.
 
@@ -69,7 +66,7 @@ count_by<- function(df, vars,by){
 }
 
 cl_appstore_games %>% 
-  count_by(c("average_user_rating"), by=developer)
+  count_by(c("average_user_rating"), by=c(developer)) 
 
 cl_appstore_games %>% 
   count_by(c("average_user_rating"), by=age_rating)
