@@ -4,6 +4,8 @@ output:
   html_document:
     code_folding: hide
     df_print: paged
+editor_options: 
+  chunk_output_type: inline
 ---
 
 In order to conduct an effect measure modification analysis we will need to engineer a feature that has the effect of the two variables we are interested in.
@@ -15,15 +17,20 @@ Let us create a function that will count the number of languages (abbreviation o
 engineer function 1: abrv_count
 will add a column to the df that will count the number of values
 ```{r abr_count}
-num_abrv<- function(){
-
+abrv_count<- function(df, vars){
+  df %>% 
+    mutate(langcount = count.fields(textConnection({{vars}}), sep = ","))
 }
 
-abrv_count<- function(){
-  
-}
+cl_appstore_games %>% 
+  abrv_count(languages) %>% 
+  select(langcount, everything())
+```
 
-
+# Testing language count feature
+```{r}
+cl_appstore_games %>% 
+  assert(within_bounds(0,Inf), langcount)
 ```
 
 

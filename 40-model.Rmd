@@ -12,9 +12,9 @@ output: html_notebook
 model1 <- cl_appstore_games %>% 
   days_since_last_v("current_version_release_date") %>% 
   count_by(c("average_user_rating"), by=developer) %>% 
-  #abrv_count function here %>% 
+  abrv_count(languages) %>% 
   #interact_price_lang_num here
-  #assets to make sure the engineered function made columns correctly
+  assert(within_bounds(0,Inf), langcount)
 
 model1
 
